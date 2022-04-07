@@ -69,7 +69,7 @@ const App = () => {
       }}
     >
       <UseWalletProvider
-        chainId={1}
+        chainId={ 1 }
         connectors={{
           walletlink: {
             url: "https://data-seed-prebsc-1-s1.binance.org:8545/",

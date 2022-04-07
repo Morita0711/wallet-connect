@@ -21,13 +21,15 @@ import {
 import { toast } from "react-toastify";
 import { useWallet } from "use-wallet";
 import { useEffect } from "react";
+import * as Web3 from "web3";
+
 const SwapCardPart = () => {
   const [cntBNB, setCntBNB] = useState(0);
   const [travelBNB, setTravlBNB] = useState(0);
   const [crypto, setCrypto] = useState("bnb");
   const wallet = useWallet();
 
-  const { currentAcc, provider, web3, setCurrentAcc } = useEthContext();
+  const { currentAcc, provider, setCurrentAcc } = useEthContext();
   const handleChange = (e) => {
     if (e.target.value >= 0 && !isNaN(cntBNB)) {
       if (e.target.name === "from") {
@@ -48,52 +50,61 @@ const SwapCardPart = () => {
     }
   };
   const onBuy = async () => {
-    if (cntBNB <= 0 || isNaN(cntBNB)) {
-      toast("Please check BNB Balance!");
-    } else {
-      if (crypto === "bnb") {
-        const contract = new web3.eth.Contract(travelABI, contract_address);
-        await contract.methods
-          .buyTokens()
-          .send({
-            from: currentAcc,
-            value: await web3.utils.toWei(cntBNB.toString(), "ether"),
-          })
-          .on("receipt", function (receipt) {
-            setCntBNB(0);
-            setTravlBNB(0);
-            toast("Success!");
-          })
-          .on("error", function (error) {
-            toast(error);
-          });
-      } else if (crypto === "usdt") {
-        const usdtContract = new web3.eth.Contract(usdtABI, usdt_address);
-        await usdtContract.methods
-          .approve(contract_address, cntBNB)
-          .send({
-            from: currentAcc,
-          })
-          .on("receipt", function (receipt) {
-            console.log("success");
-          })
-          .on("error", function (error) {
-            toast(error);
-          });
-      } else if (crypto === "busd") {
-        const busdContract = new web3.eth.Contract(busdABI, busd_address);
-        await busdContract.methods
-          .approve(contract_address, cntBNB)
-          .send({
-            from: currentAcc,
-          })
-          .on("receipt", function (receipt) {
-            console.log("success");
-          })
-          .on("error", function (error) {
-            toast(error);
-          });
+    try {
+      if (cntBNB <= 0 || isNaN(cntBNB)) {
+        toast("Please check BNB Balance!");
+      } else {
+        const web3 = new Web3(window.ethereum);
+        if (crypto === "bnb") {
+
+          console.log(travelABI, contract_address)
+          const contract = new web3.eth.Contract(travelABI, contract_address);
+          const value = web3.utils.toHex(web3.utils.toWei(cntBNB.toString(), "ether"))
+
+          await contract.methods
+            .buyTokens()
+            .send({
+              from: currentAcc,
+              value,
+            })
+            .on("receipt", function (receipt) {
+              setCntBNB(0);
+              setTravlBNB(0);
+              toast("Success!");
+            })
+            .on("error", function (error) {
+              toast(error);
+            });
+        } else if (crypto === "usdt") {
+          const usdtContract = new web3.eth.Contract(usdtABI, usdt_address);
+          await usdtContract.methods
+            .approve(contract_address, cntBNB)
+            .send({
+              from: currentAcc,
+            })
+            .on("receipt", function (receipt) {
+              console.log("success");
+            })
+            .on("error", function (error) {
+              toast(error);
+            });
+        } else if (crypto === "busd") {
+          const busdContract = new web3.eth.Contract(busdABI, busd_address);
+          await busdContract.methods
+            .approve(contract_address, cntBNB)
+            .send({
+              from: currentAcc,
+            })
+            .on("receipt", function (receipt) {
+              console.log("success");
+            })
+            .on("error", function (error) {
+              toast(error);
+            });
+        }
       }
+    } catch (error) {
+      console.log('onBuy', error)
     }
   };
 
@@ -101,7 +112,8 @@ const SwapCardPart = () => {
     await provider.request({ method: `eth_requestAccounts` });
   };
   const onMaxBalance = async () => {
-    if (web3) {
+    if (Web3) {
+      const web3 = new Web3(window.ethereum);
       const accountBalance = await web3.eth.getBalance(currentAcc);
       if (accountBalance > 0) {
         if (crypto === "bnb") {
