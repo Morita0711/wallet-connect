@@ -8,6 +8,8 @@ import LandingPage from "../src/views/LandingPage";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
+import { UseWalletProvider } from "use-wallet";
+
 const App = () => {
   const [provider, setProvider] = useState(null);
   const [web3, setWeb3] = useState(null);
@@ -36,6 +38,10 @@ const App = () => {
     }
   }, [web3]);
 
+  useEffect(() => {
+    console.log("accounts", accounts);
+  }, [accounts]);
+
   const handleEthereum = () => {
     const { ethereum } = window;
 
@@ -59,14 +65,25 @@ const App = () => {
         accounts,
         web3,
         currentAcc,
+        setCurrentAcc,
       }}
     >
-      <Router>
-        <MainContainer>
-          <Route exact path="/" component={LandingPage} />
-        </MainContainer>
-      </Router>
-      <ToastContainer />
+      <UseWalletProvider
+        chainId={1}
+        connectors={{
+          walletlink: {
+            url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+            appName: "wallet-connect",
+          },
+        }}
+      >
+        <Router>
+          <MainContainer>
+            <Route exact path="/" component={LandingPage} />
+          </MainContainer>
+        </Router>
+        <ToastContainer />
+      </UseWalletProvider>
     </EthereumContext.Provider>
   );
 };

@@ -19,12 +19,15 @@ import {
 } from "./StyledLanding";
 
 import { toast } from "react-toastify";
+import { useWallet } from "use-wallet";
+import { useEffect } from "react";
 const SwapCardPart = () => {
   const [cntBNB, setCntBNB] = useState(0);
   const [travelBNB, setTravlBNB] = useState(0);
   const [crypto, setCrypto] = useState("bnb");
+  const wallet = useWallet();
 
-  const { currentAcc, provider, web3 } = useEthContext();
+  const { currentAcc, provider, web3, setCurrentAcc } = useEthContext();
   const handleChange = (e) => {
     if (e.target.value >= 0 && !isNaN(cntBNB)) {
       if (e.target.name === "from") {
@@ -95,11 +98,7 @@ const SwapCardPart = () => {
   };
 
   const handleConnectWallet = async () => {
-    // if (Number(window.ethereum.chainId) === 1) {
     await provider.request({ method: `eth_requestAccounts` });
-    // } else {
-    //   toast.error("Please connect to mainnet", { theme: "dark" });
-    // }
   };
   const onMaxBalance = async () => {
     if (web3) {
@@ -160,6 +159,22 @@ const SwapCardPart = () => {
     setCntBNB(0);
     setTravlBNB(0);
   };
+
+  /** Custom Functions */
+  const handleCoinbase = () => {
+    wallet.connect("walletlink");
+  };
+
+  useEffect(() => {
+    if (wallet.status === "connected") {
+      setCurrentAcc(wallet.account);
+    }
+  }, [wallet.status]);
+
+  useEffect(() => {
+    console.log("accounts1", currentAcc);
+  }, [currentAcc]);
+
   return (
     <SwapCardPartDiv>
       <CardTitle>BUY NOX</CardTitle>
@@ -203,6 +218,7 @@ const SwapCardPart = () => {
         </BuyBtn>
       )}
       <MainText>*IF YOU CLICK SWITCH, YOU AGREE TO THE TERMS OF USE</MainText>
+      <button onClick={handleCoinbase}>CoinBase Connect</button>
     </SwapCardPartDiv>
   );
 };
