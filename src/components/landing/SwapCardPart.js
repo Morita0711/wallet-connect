@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { useEthContext } from "../../context/EthereumContext";
 import { travelABI, usdtABI, busdABI } from "../../contract/abi";
+import styled, { css } from "styled-components";
+import $ from "jquery";
 import {
   contract_address,
   usdt_address,
@@ -111,9 +113,6 @@ const SwapCardPart = () => {
     }
   };
 
-  const handleConnectWallet = async () => {
-    // await provider.request({ method: `eth_requestAccounts` });
-  };
   const onMaxBalance = async () => {
     if (Web3) {
       const web3 = new Web3(window.ethereum);
@@ -175,64 +174,113 @@ const SwapCardPart = () => {
     setTravlBNB(0);
   };
 
-  /** Custom Functions */
-  const handleCoinbase = () => {};
-
   useEffect(() => {
     console.log("wallet.account", wallet.status);
     if (wallet.status === "connected") {
       setCurrentAcc(wallet.account);
     }
   }, [wallet.status]);
-
+  // $("#myModal").modal({ backdrop: "static", keyboard: false });
   return (
-    <SwapCardPartDiv>
-      <CardTitle>BUY NOX</CardTitle>
-      <FormGroup>
-        <CryptoSelect
-          value={cntBNB.toString()}
-          onChange={onCryptoChange}
-          onCryptoChange={handleChange}
-          onMaxBalance={onMaxBalance}
-          crypto={crypto}
-          name="from"
-          label="From"
-          btn="BNB"
-          placeholder="From"
-        />
+    <>
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">
+                Connect to a wallet
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <Button onClick={() => wallet.connect("walletlink")}>
+                CoinBase Connect
+              </Button>
+              <Button onClick={() => wallet.connect("bsc")}>
+                Binance Connect
+              </Button>
+              <Button onClick={() => wallet.connect("walletconnect")}>
+                Walletconnect Connect
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <SwapCardPartDiv>
+        <CardTitle>BUY NOX</CardTitle>
+        <FormGroup>
+          <CryptoSelect
+            value={cntBNB.toString()}
+            onChange={onCryptoChange}
+            onCryptoChange={handleChange}
+            onMaxBalance={onMaxBalance}
+            crypto={crypto}
+            name="from"
+            label="From"
+            btn="BNB"
+            placeholder="From"
+          />
 
-        <InputField
-          value={travelBNB.toString()}
-          onChange={handleChange}
-          label="To"
-          name="to"
-          btn="NITROX"
-          placeholder="Enter token balance."
-        />
-      </FormGroup>
-      {currentAcc && currentAcc ? (
-        <BuyBtn
-          onClick={() => {
-            onBuy();
-          }}
-        >
-          BUY NITROX
-        </BuyBtn>
-      ) : (
-        <BuyBtn onClick={() => wallet.connect("injected")}>
-          Connect Wallet
-        </BuyBtn>
-      )}
-      <MainText>*IF YOU CLICK SWITCH, YOU AGREE TO THE TERMS OF USE</MainText>
-      <button onClick={() => wallet.connect("walletlink")}>
-        CoinBase Connect
-      </button>
-      <button onClick={() => wallet.connect("bsc")}>Binance Connect</button>
-      <button onClick={() => wallet.connect("walletconnect")}>
-        Walletconnect Connect
-      </button>
-    </SwapCardPartDiv>
+          <InputField
+            value={travelBNB.toString()}
+            onChange={handleChange}
+            label="To"
+            name="to"
+            btn="NITROX"
+            placeholder="Enter token balance."
+          />
+        </FormGroup>
+        {currentAcc && currentAcc ? (
+          <BuyBtn
+            onClick={() => {
+              onBuy();
+            }}
+          >
+            BUY NITROX
+          </BuyBtn>
+        ) : (
+          // <BuyBtn
+          //   data-bs-toggle="modal"
+          //   href="#exampleModalToggle"
+          //   role="button"
+          //   onClick={() => wallet.connect("injected")}
+          // >
+          //   Connect Wallet
+          // </BuyBtn>
+          <button
+            type="button"
+            class="btn btn-primary btn-lg btn-block"
+            data-bs-toggle="modal"
+            data-bs-target="#exampleModal"
+          >
+            Launch demo modal
+          </button>
+        )}
+        <MainText>*IF YOU CLICK SWITCH, YOU AGREE TO THE TERMS OF USE</MainText>
+      </SwapCardPartDiv>
+    </>
   );
 };
+const Button = styled.button`
+  /* Adapt the colors based on primary prop */
+  background: ${(props) => (props.primary ? "palevioletred" : "white")};
+  color: ${(props) => (props.primary ? "white" : "palevioletred")};
+  font-size: 1em;
+  margin: 1em;
+  padding: 0.25em 1em;
+  border: 2px solid palevioletred;
+  border-radius: 3px;
+`;
 
 export default SwapCardPart;
