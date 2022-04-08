@@ -7,4 +7,5 @@ export const EthereumContext = createContext({
   Web3: Web3 ? Web3 : null,
   currentAcc: "",
 });
+
 export const useEthContext = () => useContext(EthereumContext);

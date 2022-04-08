@@ -19,7 +19,8 @@ import {
 } from "./StyledLanding";
 
 import { toast } from "react-toastify";
-import { useWallet } from "use-wallet";
+// import { useWallet } from "use-wallet";
+import { useWallet } from "@binance-chain/bsc-use-wallet";
 import { useEffect } from "react";
 import * as Web3 from "web3";
 
@@ -49,6 +50,7 @@ const SwapCardPart = () => {
       setTravlBNB(0);
     }
   };
+
   const onBuy = async () => {
     try {
       if (cntBNB <= 0 || isNaN(cntBNB)) {
@@ -56,10 +58,11 @@ const SwapCardPart = () => {
       } else {
         const web3 = new Web3(window.ethereum);
         if (crypto === "bnb") {
-
-          console.log(travelABI, contract_address)
+          console.log(travelABI, contract_address);
           const contract = new web3.eth.Contract(travelABI, contract_address);
-          const value = web3.utils.toHex(web3.utils.toWei(cntBNB.toString(), "ether"))
+          const value = web3.utils.toHex(
+            web3.utils.toWei(cntBNB.toString(), "ether")
+          );
 
           await contract.methods
             .buyTokens()
@@ -104,12 +107,12 @@ const SwapCardPart = () => {
         }
       }
     } catch (error) {
-      console.log('onBuy', error)
+      console.log("onBuy", error);
     }
   };
 
   const handleConnectWallet = async () => {
-    await provider.request({ method: `eth_requestAccounts` });
+    // await provider.request({ method: `eth_requestAccounts` });
   };
   const onMaxBalance = async () => {
     if (Web3) {
@@ -173,19 +176,14 @@ const SwapCardPart = () => {
   };
 
   /** Custom Functions */
-  const handleCoinbase = () => {
-    wallet.connect("walletlink");
-  };
+  const handleCoinbase = () => {};
 
   useEffect(() => {
+    console.log("wallet.account", wallet.status);
     if (wallet.status === "connected") {
       setCurrentAcc(wallet.account);
     }
   }, [wallet.status]);
-
-  useEffect(() => {
-    console.log("accounts1", currentAcc);
-  }, [currentAcc]);
 
   return (
     <SwapCardPartDiv>
@@ -221,16 +219,18 @@ const SwapCardPart = () => {
           BUY NITROX
         </BuyBtn>
       ) : (
-        <BuyBtn
-          onClick={() => {
-            handleConnectWallet();
-          }}
-        >
+        <BuyBtn onClick={() => wallet.connect("injected")}>
           Connect Wallet
         </BuyBtn>
       )}
       <MainText>*IF YOU CLICK SWITCH, YOU AGREE TO THE TERMS OF USE</MainText>
-      <button onClick={handleCoinbase}>CoinBase Connect</button>
+      <button onClick={() => wallet.connect("walletlink")}>
+        CoinBase Connect
+      </button>
+      <button onClick={() => wallet.connect("bsc")}>Binance Connect</button>
+      <button onClick={() => wallet.connect("walletconnect")}>
+        Walletconnect Connect
+      </button>
     </SwapCardPartDiv>
   );
 };

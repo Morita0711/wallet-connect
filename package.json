@@ -3,8 +3,11 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@binance-chain/bsc-use-wallet": "^0.8.1",
+    "@pancakeswap-libs/uikit": "^0.29.4",
     "bignumber.js": "^9.0.1",
     "react": "16.11.0",
+    "react-connect-wallet": "^0.0.0",
     "react-copy-to-clipboard": "^5.0.4",
     "react-crypto-icons": "^1.0.5",
     "react-dom": "16.11.0",
