@@ -185,28 +185,28 @@ const SwapCardPart = () => {
   return (
     <>
       <div
-        class="modal fade"
+        className="modal fade"
         id="exampleModal"
-        tabindex="-1"
+        tabIndex="-1"
         aria-labelledby="exampleModalLabel"
         aria-hidden="true"
         data-backdrop="static"
         data-keyboard="false"
       >
-        <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content">
-            <div class="modal-header">
-              <h5 class="modal-title" id="exampleModalLabel">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h5 className="modal-title" id="exampleModalLabel">
                 Connect to a wallet
               </h5>
               <button
                 type="button"
-                class="btn-close"
+                className="btn-close"
                 data-bs-dismiss="modal"
                 aria-label="Close"
               ></button>
             </div>
-            <div class="modal-body">
+            <div className="modal-body">
               <Block>
                 <Button onClick={() => wallet.connect()}>
                   Metamask Connect
@@ -216,7 +216,7 @@ const SwapCardPart = () => {
                   width="32px"
                   color="text"
                   xmlns="http://www.w3.org/2000/svg"
-                  class="sc-bdnxRM IFgii"
+                  className="sc-bdnxRM IFgii"
                 >
                   <circle cx="48" cy="48" r="48" fill="white"></circle>
                   <path
@@ -355,7 +355,7 @@ const SwapCardPart = () => {
                   width="32px"
                   color="text"
                   xmlns="http://www.w3.org/2000/svg"
-                  class="sc-bdnxRM IFgii"
+                  className="sc-bdnxRM IFgii"
                 >
                   <path
                     d="M24 0H8C3.58172 0 0 3.58172 0 8V24C0 28.4183 3.58172 32 8 32H24C28.4183 32 32 28.4183 32 24V8C32 3.58172 28.4183 0 24 0Z"
@@ -412,7 +412,7 @@ const SwapCardPart = () => {
                   width="32px"
                   color="text"
                   xmlns="http://www.w3.org/2000/svg"
-                  class="sc-bdnxRM IFgii"
+                  className="sc-bdnxRM IFgii"
                 >
                   <path
                     d="M96 48C96 21.4903 74.5097 0 48 0C21.4903 0 0 21.4903 0 48C0 74.5097 21.4903 96 48 96C74.5097 96 96 74.5097 96 48Z"
@@ -471,7 +471,7 @@ const SwapCardPart = () => {
           // </BuyBtn>
           <button
             type="button"
-            class="btn btn-primary w-100"
+            className="btn btn-primary w-100"
             data-bs-toggle="modal"
             data-bs-target="#exampleModal"
           >
@@ -483,7 +483,7 @@ const SwapCardPart = () => {
     </>
   );
 };
-const Button = styled.button`
+const Button = styled.div`
   /* Adapt the colors based on primary prop */
   color: ${(props) => (props.primary ? "white" : "##0000003b")};
   background-color: transparent;

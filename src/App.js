@@ -93,24 +93,6 @@ const App = () => {
             bsc,
           }}
         >
-          {/* <UseWalletProvider
-            chainId={1}
-            connectors={{
-              injected: {
-                supportedChainIds: [56], //, NETWORK_CHAIN_IDS.mainnet
-              },
-
-              walletconnect: {
-                rpcUrl: "https://bsc-dataseed.binance.org/",
-              },
-
-              walletlink: {
-                url: "https://bsc-dataseed.binance.org/",
-                appName: "Halloween Bear",
-                supportedChainIds: [56],
-              },
-            }}
-          > */}
           <Router>
             <MainContainer>
               <Route exact path="/" component={LandingPage} />
