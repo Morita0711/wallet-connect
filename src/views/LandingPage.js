@@ -9,7 +9,7 @@ const LandingPage = () => {
     <LandingDiv>
       <HeaderTextPart />
       <SwapCardPart />
-      {/* <FooterPart /> */}
+      <FooterPart />
     </LandingDiv>
   );
 };

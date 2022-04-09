@@ -35,6 +35,7 @@ const HeaderTextPart = () => {
           {currentAcc && currentAcc ? (
             <>
               <div className="main_title">
+                {currentAcc}
                 YOUR ADDRESS:{currentAcc.substring(0, 4)}...
                 {currentAcc.substring(currentAcc.length - 4)}
               </div>

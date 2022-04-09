@@ -75,24 +75,51 @@ const App = () => {
         }}
       >
         <bsc.UseWalletProvider
-          // chainId={56}
+          chainId={97}
           connectors={{
             injected: {
-              supportedChainIds: [56], //, NETWORK_CHAIN_IDS.mainnet
+              supportedChainIds: [97], //, NETWORK_CHAIN_IDS.mainnet
             },
 
             walletconnect: {
-              rpcUrl: "https://bsc-dataseed.binance.org/",
+              chainId: 97,
+              rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+              supportedChainIds: [97],
             },
 
             walletlink: {
-              url: "https://bsc-dataseed.binance.org/",
+              chainId: 1,
+              url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
               appName: "Halloween Bear",
-              supportedChainIds: [56],
+              supportedChainIds: [1, 97],
+
+              // supportedChainIds: [97],
             },
-            bsc,
+
+            bsc: {
+              url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+              supportedChainIds: [97],
+            },
           }}
         >
+          {/* <bsc.UseWalletProvider
+          chainId={97}
+          connectors={{
+            injected: {
+              supportedChainIds: [97], //, NETWORK_CHAIN_IDS.mainnet
+            },
+
+            walletconnect: {
+              chainId: 56,
+              rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+            },
+
+            bsc: {
+              url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+              supportedChainIds: [97],
+            },
+          }}
+        > */}
           <Router>
             <MainContainer>
               <Route exact path="/" component={LandingPage} />
