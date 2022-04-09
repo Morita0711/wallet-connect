@@ -82,19 +82,17 @@ const App = () => {
             },
 
             walletconnect: {
-              chainId: 97,
+              chainId: 56,
               rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-              supportedChainIds: [97],
+              supportedChainIds: [56],
             },
 
-            walletlink: {
-              chainId: 1,
-              url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-              appName: "Halloween Bear",
-              supportedChainIds: [1, 97],
-
-              // supportedChainIds: [97],
-            },
+            // walletlink: {
+            //   chainId: 1,
+            //   url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
+            //   appName: "Halloween Bear",
+            //   supportedChainIds: [1, 97],
+            // },
 
             bsc: {
               url: "https://data-seed-prebsc-1-s1.binance.org:8545/",

@@ -18,6 +18,7 @@ import {
 import InputField from "../../components/custom/InputField";
 import CryptoSelect from "../../components/custom/CryptoSelect";
 import { connectors } from "../connectors/index";
+import { ethers } from "ethers";
 
 import {
   BuyBtn,
@@ -32,18 +33,29 @@ import { toast } from "react-toastify";
 import { useWallet } from "@binance-chain/bsc-use-wallet";
 import { useEffect } from "react";
 import * as Web3 from "web3";
+import { Web3ReactProvider } from "@web3-react/core";
 
 const SwapCardPart = () => {
+  const getLibrary = (provider) => {
+    const library = new ethers.providers.Web3Provider(provider);
+    library.pollingInterval = 8000; // frequency provider is polling
+    return library;
+  };
   const [cntBNB, setCntBNB] = useState(0);
   const [travelBNB, setTravlBNB] = useState(0);
   const [crypto, setCrypto] = useState("bnb");
   const [modalShow, setModalShow] = useState(false);
   const wallet = useWallet();
+  const setProvider = (type) => {
+    window.localStorage.setItem("provider", type);
+  };
   const { activate } = useWeb3React();
 
   const { currentAcc, provider, setCurrentAcc } = useEthContext();
 
   const MyVerticallyCenteredModal = (props) => {
+    console.log(connectors);
+
     return (
       <Modal
         {...props}
@@ -68,17 +80,21 @@ const SwapCardPart = () => {
             </Button>
             <img src={metamaskIcon} style={{ width: 35, height: 35 }}></img>
           </Block>
-          <Block>
-            <Button
-              onClick={() => {
-                setModalShow(false);
-                activate(connectors.coinbaseWallet);
-              }}
-            >
-              CoinBase Connect
-            </Button>
-            <img src={coinbaseIcon} style={{ width: 35, height: 35 }}></img>
-          </Block>
+          {/* <Web3ReactProvider getLibrary={getLibrary}>
+            <Block>
+              <Button
+                onClick={() => {
+                  setModalShow(false);
+                  setProvider("coinbaseWallet");
+                  activate(connectors.coinbaseWallet);
+                }}
+              >
+                CoinBase Connect
+              </Button>
+
+              <img src={coinbaseIcon} style={{ width: 35, height: 35 }}></img>
+            </Block>
+          </Web3ReactProvider> */}
           <Block>
             <Button
               onClick={() => {
