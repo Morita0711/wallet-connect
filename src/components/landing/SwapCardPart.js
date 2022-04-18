@@ -1,13 +1,15 @@
 import React, { useState } from "react";
 import { Modal } from "react-bootstrap";
-import { useWeb3React } from "@web3-react/core";
-
 import { useEthContext } from "../../context/EthereumContext";
 import { travelABI, usdtABI, busdABI } from "../../contract/abi";
-import styled, { css } from "styled-components";
+import styled from "styled-components";
 import coinbaseIcon from "../../assets/coinbase.png";
 import metamaskIcon from "../../assets/matamask.png";
 import walletconnectIcon from "../../assets/walletconnect.png";
+import coin98Icon from "../../assets/coin98.png";
+import FortmaticIcon from "../../assets/fortmatic.png";
+import MathwalletIcon from "../../assets/mathwallet.png";
+
 import binanceIcon from "../../assets/binance.png";
 import {
   contract_address,
@@ -17,8 +19,6 @@ import {
 
 import InputField from "../../components/custom/InputField";
 import CryptoSelect from "../../components/custom/CryptoSelect";
-import { connectors } from "../connectors/index";
-import { ethers } from "ethers";
 
 import {
   BuyBtn,
@@ -29,33 +29,20 @@ import {
 } from "./StyledLanding";
 
 import { toast } from "react-toastify";
-// import { useWallet } from "use-wallet";
 import { useWallet } from "@binance-chain/bsc-use-wallet";
 import { useEffect } from "react";
 import * as Web3 from "web3";
-import { Web3ReactProvider } from "@web3-react/core";
 
 const SwapCardPart = () => {
-  const getLibrary = (provider) => {
-    const library = new ethers.providers.Web3Provider(provider);
-    library.pollingInterval = 8000; // frequency provider is polling
-    return library;
-  };
   const [cntBNB, setCntBNB] = useState(0);
   const [travelBNB, setTravlBNB] = useState(0);
   const [crypto, setCrypto] = useState("bnb");
   const [modalShow, setModalShow] = useState(false);
   const wallet = useWallet();
-  const setProvider = (type) => {
-    window.localStorage.setItem("provider", type);
-  };
-  const { activate } = useWeb3React();
 
   const { currentAcc, provider, setCurrentAcc } = useEthContext();
 
   const MyVerticallyCenteredModal = (props) => {
-    console.log(connectors);
-
     return (
       <Modal
         {...props}
@@ -80,21 +67,7 @@ const SwapCardPart = () => {
             </Button>
             <img src={metamaskIcon} style={{ width: 35, height: 35 }}></img>
           </Block>
-          {/* <Web3ReactProvider getLibrary={getLibrary}>
-            <Block>
-              <Button
-                onClick={() => {
-                  setModalShow(false);
-                  setProvider("coinbaseWallet");
-                  activate(connectors.coinbaseWallet);
-                }}
-              >
-                CoinBase Connect
-              </Button>
 
-              <img src={coinbaseIcon} style={{ width: 35, height: 35 }}></img>
-            </Block>
-          </Web3ReactProvider> */}
           <Block>
             <Button
               onClick={() => {
@@ -119,6 +92,54 @@ const SwapCardPart = () => {
               src={walletconnectIcon}
               style={{ width: 35, height: 35 }}
             ></img>
+          </Block>
+
+          <Block>
+            <Button
+              onClick={() => {
+                setModalShow(false);
+                wallet.connect("walletlink");
+              }}
+            >
+              Coinbase Connect
+            </Button>
+            <img src={coinbaseIcon} style={{ width: 35, height: 35 }}></img>
+          </Block>
+
+          <Block>
+            <Button
+              onClick={() => {
+                setModalShow(false);
+                wallet.connect("fortmatic");
+              }}
+            >
+              Fortmatic Connect
+            </Button>
+            <img src={FortmaticIcon} style={{ width: 35, height: 35 }}></img>
+          </Block>
+
+          <Block>
+            <Button
+              onClick={() => {
+                setModalShow(false);
+                wallet.connect();
+              }}
+            >
+              Coin98Wallet Connect
+            </Button>
+            <img src={coin98Icon} style={{ width: 35, height: 35 }}></img>
+          </Block>
+
+          <Block>
+            <Button
+              onClick={() => {
+                setModalShow(false);
+                wallet.connect();
+              }}
+            >
+              MathWallet Connect
+            </Button>
+            <img src={MathwalletIcon} style={{ width: 35, height: 35 }}></img>
           </Block>
         </Modal.Body>
       </Modal>
@@ -150,9 +171,6 @@ const SwapCardPart = () => {
       if (cntBNB <= 0 || isNaN(cntBNB)) {
         toast("Please check BNB Balance!");
       } else {
-        /* const provider = new Web3.providers.HttpProvider(
-          "https://data-seed-prebsc-1-s1.binance.org:8545/"
-        ); */
         const web3 = new Web3(wallet.ethereum);
         if (crypto === "bnb") {
           console.log(travelABI, currentAcc);
@@ -281,7 +299,6 @@ const SwapCardPart = () => {
       setCurrentAcc(wallet.account);
     }
   }, [wallet.status]);
-  // $("#myModal").modal({ backdrop: "static", keyboard: false });
   return (
     <>
       <MyVerticallyCenteredModal

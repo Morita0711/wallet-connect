@@ -63,6 +63,7 @@ const App = () => {
 
   const rpcUrl = "https://data-seed-prebsc-2-s3.binance.org:8545/";
   const chainId = 97;
+
   return (
     <>
       <EthereumContext.Provider
@@ -75,49 +76,34 @@ const App = () => {
         }}
       >
         <bsc.UseWalletProvider
-          chainId={97}
+          // chainId={97}
           connectors={{
             injected: {
               supportedChainIds: [97], //, NETWORK_CHAIN_IDS.mainnet
             },
 
+            walletlink: {
+              chainId: 1,
+              url: rpcUrl,
+              appName: "wallet",
+            },
             walletconnect: {
-              chainId: 56,
-              rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-              supportedChainIds: [56],
+              chainId,
+              rpcUrl,
+              supportedChainIds: [chainId],
             },
-
-            // walletlink: {
-            //   chainId: 1,
-            //   url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-            //   appName: "Halloween Bear",
-            //   supportedChainIds: [1, 97],
-            // },
-
+            fortmatic: {
+              apiKey: "pk_test_1E1E04287AE23CBA",
+              rpcUrl,
+              supportedChainIds: [1, 3, 4, 5, 42, 56, 97, 1337],
+            },
             bsc: {
-              url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-              supportedChainIds: [97],
+              url: rpcUrl,
+              supportedChainIds: [chainId],
             },
+            Coin98: {},
           }}
         >
-          {/* <bsc.UseWalletProvider
-          chainId={97}
-          connectors={{
-            injected: {
-              supportedChainIds: [97], //, NETWORK_CHAIN_IDS.mainnet
-            },
-
-            walletconnect: {
-              chainId: 56,
-              rpcUrl: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-            },
-
-            bsc: {
-              url: "https://data-seed-prebsc-1-s1.binance.org:8545/",
-              supportedChainIds: [97],
-            },
-          }}
-        > */}
           <Router>
             <MainContainer>
               <Route exact path="/" component={LandingPage} />
