@@ -3,14 +3,17 @@ import { Modal } from "react-bootstrap";
 import { useEthContext } from "../../context/EthereumContext";
 import { travelABI, usdtABI, busdABI } from "../../contract/abi";
 import styled from "styled-components";
+
+//import image
 import coinbaseIcon from "../../assets/coinbase.png";
 import metamaskIcon from "../../assets/matamask.png";
 import walletconnectIcon from "../../assets/walletconnect.png";
 import coin98Icon from "../../assets/coin98.png";
 import FortmaticIcon from "../../assets/fortmatic.png";
 import MathwalletIcon from "../../assets/mathwallet.png";
-
 import binanceIcon from "../../assets/binance.png";
+
+//import contract
 import {
   contract_address,
   usdt_address,
