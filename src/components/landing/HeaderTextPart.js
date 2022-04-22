@@ -34,14 +34,7 @@ const HeaderTextPart = () => {
         <HeaderTitle>
           {currentAcc && currentAcc ? (
             <>
-              <div className="main_title">
-                {currentAcc}
-                YOUR ADDRESS:{currentAcc.substring(0, 4)}...
-                {currentAcc.substring(currentAcc.length - 4)}
-              </div>
-              <div className="main_title">
-                YOU CURRENTLY HAVE {balance} NOX.
-              </div>
+              <div className="main_title"></div>{" "}
             </>
           ) : (
             <div className="main_title">Please connect your wallet.</div>

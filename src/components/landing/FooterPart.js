@@ -50,7 +50,7 @@ const FooterPart = () => {
           </FooterProgress>
           <FooterSupplyText>
             {(Number(balance / 100000).toFixed(2) * 100) / 100}% LEFT /{" "}
-            {balance} NOX
+            {balance} Token
           </FooterSupplyText>
         </>
       )}

@@ -1,6 +1,5 @@
 import React from "react";
-import { CryptoLabelView, Input, InputDiv, InputFieldDiv } from "./StyledInput";
-import noxImg from "../../assets/Nox_Transp.png";
+import { Input, InputDiv, InputFieldDiv } from "./StyledInput";
 const InputField = ({ value, placeholder, onChange, name }) => {
   return (
     <InputFieldDiv>
@@ -14,10 +13,6 @@ const InputField = ({ value, placeholder, onChange, name }) => {
           disabled
         />
       </InputDiv>
-
-      <CryptoLabelView>
-        <img src={noxImg} alt="nox token" width="25px" height="25px" />
-      </CryptoLabelView>
     </InputFieldDiv>
   );
 };

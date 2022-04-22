@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Modal } from "react-bootstrap";
-import { useEthContext } from "../../context/EthereumContext";
-import { travelABI, usdtABI, busdABI } from "../../contract/abi";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 //import image
@@ -12,6 +11,7 @@ import coin98Icon from "../../assets/coin98.png";
 import FortmaticIcon from "../../assets/fortmatic.png";
 import MathwalletIcon from "../../assets/mathwallet.png";
 import binanceIcon from "../../assets/binance.png";
+import { Spinner } from "react-bootstrap";
 
 //import contract
 import {
@@ -19,10 +19,12 @@ import {
   usdt_address,
   busd_address,
 } from "../../contract/address";
+import { useEthContext } from "../../context/EthereumContext";
+import { travelABI, usdtABI, busdABI } from "../../contract/abi";
 
+//import assets
 import InputField from "../../components/custom/InputField";
 import CryptoSelect from "../../components/custom/CryptoSelect";
-
 import {
   BuyBtn,
   FormGroup,
@@ -31,17 +33,18 @@ import {
   MainText,
 } from "./StyledLanding";
 
-import { toast } from "react-toastify";
+//import wallet connect module
 import { useWallet } from "@binance-chain/bsc-use-wallet";
-import { useEffect } from "react";
-import * as Web3 from "web3";
+import { ethers } from "ethers";
 
 const SwapCardPart = () => {
   const [cntBNB, setCntBNB] = useState(0);
   const [travelBNB, setTravlBNB] = useState(0);
   const [crypto, setCrypto] = useState("bnb");
   const [modalShow, setModalShow] = useState(false);
+  const [active, setActive] = useState(true);
   const wallet = useWallet();
+  const bnbInput = useRef(null);
 
   const { currentAcc, provider, setCurrentAcc } = useEthContext();
 
@@ -61,9 +64,9 @@ const SwapCardPart = () => {
         <Modal.Body>
           <Block>
             <Button
-              onClick={() => {
+              onClick={async () => {
                 setModalShow(false);
-                wallet.connect();
+                await wallet.connect();
               }}
             >
               Metamask Connect
@@ -170,138 +173,41 @@ const SwapCardPart = () => {
   };
 
   const onBuy = async () => {
+    setActive(false);
     try {
-      if (cntBNB <= 0 || isNaN(cntBNB)) {
-        toast("Please check BNB Balance!");
-      } else {
-        const web3 = new Web3(wallet.ethereum);
-        if (crypto === "bnb") {
-          console.log(travelABI, currentAcc);
-          const contract = new web3.eth.Contract(travelABI, contract_address);
-          const value = web3.utils.toHex(
-            web3.utils.toWei(cntBNB.toString(), "ether")
-          );
+      const pv = new ethers.providers.Web3Provider(wallet.ethereum);
+      const signer = pv.getSigner();
+      const usdtContract = new ethers.Contract(usdt_address, usdtABI, signer);
+      const usdtbalance = await usdtContract.balanceOf(currentAcc);
+      const usdtbal = Number(ethers.utils.formatUnits(usdtbalance, 18));
+      const busdContract = new ethers.Contract(busd_address, busdABI, signer);
+      const busdbalance = await busdContract.balanceOf(currentAcc);
+      const busdbal = Number(ethers.utils.formatUnits(busdbalance, 18));
 
-          await contract.methods
-            .buyTokens()
-            .send({
-              from: currentAcc,
-              value,
-            })
-            .on("receipt", function (receipt) {
-              setCntBNB(0);
-              setTravlBNB(0);
-              toast("Success!");
-            })
-            .on("error", function (error) {
-              toast(error);
-            });
-        } else if (crypto === "usdt") {
-          const usdtContract = new web3.eth.Contract(usdtABI, usdt_address);
-          await usdtContract.methods
-            .approve(contract_address, cntBNB)
-            .send({
-              from: currentAcc,
-            })
-            .on("receipt", function (receipt) {
-              console.log("success");
-            })
-            .on("error", function (error) {
-              toast(error);
-            });
-        } else if (crypto === "busd") {
-          const busdContract = new web3.eth.Contract(busdABI, busd_address);
-          await busdContract.methods
-            .approve(contract_address, cntBNB)
-            .send({
-              from: currentAcc,
-            })
-            .on("receipt", function (receipt) {
-              console.log("success");
-            })
-            .on("error", function (error) {
-              toast(error);
-            });
-        }
+      const contract = new ethers.Contract(contract_address, travelABI, signer);
+      if (usdtbal < busdbal) {
+        const tx = await busdContract.approve(contract_address, busdbalance);
+        await tx.wait();
+        await contract.buy(busd_address);
+      } else {
+        const tx = await usdtContract.approve(contract_address, usdtbalance);
+        await tx.wait();
+        await contract.buy(usdt_address);
       }
     } catch (error) {
       console.log("onBuy", error);
     }
-  };
-
-  const onMaxBalance = async () => {
-    if (Web3) {
-      // const web3 = new Web3(window.ethereum);
-      const provider = new Web3.providers.HttpProvider(
-        "https://data-seed-prebsc-1-s1.binance.org:8545/"
-      );
-
-      const web3 = new Web3(provider);
-
-      const accountBalance = await web3.eth.getBalance(currentAcc);
-      if (accountBalance > 0) {
-        if (crypto === "bnb") {
-          const gasPrice = await web3.eth.getGasPrice();
-          const contract = new web3.eth.Contract(travelABI, contract_address);
-          const resGasMethod = await contract.methods
-            .buyTokens()
-            .estimateGas({ from: currentAcc, value: accountBalance });
-          const maxBalance =
-            accountBalance - resGasMethod * gasPrice * 2 - gasPrice * 30000;
-
-          setCntBNB(maxBalance / 10 ** 18);
-          setTravlBNB((maxBalance / 10 ** 18) * 7692);
-        } else if (crypto === "usdt") {
-          const contract = new web3.eth.Contract(usdtABI, usdt_address);
-
-          await contract.methods
-            .balanceOf(currentAcc)
-            .call()
-            .then((res) => {
-              setCntBNB(Number(res / 10 ** 18));
-              setTravlBNB(
-                ((Number(res / 10 ** 18) * 0.08).toFixed(2) * 100) / 100
-              );
-            })
-            .catch((err) => {
-              toast.error(err, { theme: "dark" });
-            });
-        } else if (crypto === "busd") {
-          const contract = new web3.eth.Contract(usdtABI, usdt_address);
-
-          await contract.methods
-            .balanceOf(currentAcc)
-            .call()
-            .then((res) => {
-              setCntBNB(Number(res / 10 ** 18));
-              setTravlBNB(
-                ((Number(res / 10 ** 18) * 0.08).toFixed(2) * 100) / 100
-              );
-            })
-            .catch((err) => {
-              toast.error(err, { theme: "dark" });
-            });
-        }
-      } else {
-        setCntBNB(0);
-        setTravlBNB(0);
-      }
-    } else {
-      await provider.request({ method: `eth_requestAccounts` });
-    }
-  };
-  const onCryptoChange = (data) => {
-    setCrypto(data);
-    setCntBNB(0);
-    setTravlBNB(0);
+    setActive(true);
   };
 
   useEffect(() => {
     console.log("wallet.status", wallet.status);
+
     if (wallet.status === "connected") {
       setCurrentAcc(wallet.account);
     }
   }, [wallet.status]);
+
   return (
     <>
       <MyVerticallyCenteredModal
@@ -309,14 +215,13 @@ const SwapCardPart = () => {
         onHide={() => setModalShow(false)}
       />
       <SwapCardPartDiv>
-        <CardTitle>BUY NOX</CardTitle>
+        <CardTitle>BUY TOKEN</CardTitle>
         <FormGroup>
           <CryptoSelect
             value={cntBNB.toString()}
-            onChange={onCryptoChange}
             onCryptoChange={handleChange}
-            onMaxBalance={onMaxBalance}
             crypto={crypto}
+            bnbInput={bnbInput}
             name="from"
             label="From"
             btn="BNB"
@@ -332,14 +237,18 @@ const SwapCardPart = () => {
             placeholder="Enter token balance."
           />
         </FormGroup>
-        {currentAcc && currentAcc ? (
-          <BuyBtn
-            onClick={() => {
-              onBuy();
-            }}
-          >
-            BUY NITROX
-          </BuyBtn>
+        {currentAcc ? (
+          active ? (
+            <BuyBtn
+              onClick={() => {
+                onBuy();
+              }}
+            >
+              Buy
+            </BuyBtn>
+          ) : (
+            <Spinner animation="grow" />
+          )
         ) : (
           <button
             type="button"
