@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route } from "react-router-dom";
 import styled from "styled-components";
 import { EthereumContext } from "./context/EthereumContext";
 import LandingPage from "../src/views/LandingPage";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "./App.css";
 import * as bsc from "@binance-chain/bsc-use-wallet";
